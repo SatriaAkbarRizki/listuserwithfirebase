@@ -25,4 +25,16 @@ class CloudStorage {
       return null;
     }
   }
+
+  Future<void> deleteImage(String? links) async {
+    String url = links.toString();
+    Uri uri = Uri.parse(url);
+    String path = uri.path;
+    String fileName = path.substring(path.lastIndexOf('/image%2F') + 9);
+    print("Nama file: $fileName");
+
+    final deletedRed =
+        FirebaseStorage.instance.ref().child("image/${fileName}");
+    await deletedRed.delete();
+  }
 }

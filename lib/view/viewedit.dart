@@ -52,6 +52,7 @@ class _ViewEditState extends State<ViewEdit> {
   }
 
   Widget build(BuildContext context) {
+    print('image in view edit: ${widget.image}');
     print('length user edit: ${widget.name}');
     return Scaffold(
       appBar: AppBar(
@@ -62,6 +63,7 @@ class _ViewEditState extends State<ViewEdit> {
                 await cloudStorage.uploadImage(imageProfile).then((value) {
                   updateData(value!);
                 });
+                cloudStorage.deleteImage(widget.image);
                 Navigator.pop(context);
               },
               icon: Icon(Icons.add))
@@ -108,13 +110,12 @@ class _ViewEditState extends State<ViewEdit> {
             ),
           ),
           Container(
-            width: 350,
-            height: 300,
-            padding: EdgeInsets.all(20),
-            child: pathImage?.path == null
-                ? Text('')
-                : Image.file(File(pathImage!.path), fit: BoxFit.fill),
-          )
+              width: 350,
+              height: 300,
+              padding: EdgeInsets.all(20),
+              child: pathImage?.path == null
+                  ? Image(image: NetworkImage(widget.image.toString()))
+                  : Image.file(File(pathImage!.path), fit: BoxFit.fill))
         ],
       ),
     );
@@ -135,3 +136,5 @@ class _ViewEditState extends State<ViewEdit> {
     }
   }
 }
+
+// Image.file(File(pathImage!.path), fit: BoxFit.fill)

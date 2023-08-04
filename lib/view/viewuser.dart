@@ -2,6 +2,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter/material.dart';
 import 'package:listuserwithfirebase/model/user.dart';
 import 'package:listuserwithfirebase/presenter/presenter.dart';
+import 'package:listuserwithfirebase/storage/cloudstorage.dart';
 import 'package:listuserwithfirebase/view/viewadd.dart';
 import 'package:listuserwithfirebase/view/viewedit.dart';
 
@@ -14,6 +15,7 @@ class ViewUser extends StatefulWidget {
 
 class _ViewUserState extends State<ViewUser> {
   bool selectbox = false;
+  CloudStorage cloudStorage = CloudStorage();
   Presenter presenter = Presenter();
   List<User> userList = <User>[];
 
@@ -90,6 +92,7 @@ class _ViewUserState extends State<ViewUser> {
               backgroundColor: Colors.red,
               onPressed: (context) {
                 presenter.deleteData(user[index].id!);
+                cloudStorage.deleteImage(user[index].image);
                 setState(() {});
               },
               icon: Icons.delete,
