@@ -32,7 +32,7 @@ class _ViewUserState extends State<ViewUser> {
   @override
   Widget build(BuildContext context) {
     userList.forEach((element) {
-      print(element.name);
+      print(element.image);
     });
     print(userList.length);
     return Scaffold(
@@ -96,7 +96,11 @@ class _ViewUserState extends State<ViewUser> {
             )
           ]),
           child: ListTile(
-            leading: CircleAvatar(),
+            leading: CircleAvatar(
+              backgroundImage: user[index].image != null
+                  ? NetworkImage(user[index].image.toString())
+                  : null,
+            ),
             title: Text(user![index].name),
             subtitle: Text(user[index].address),
             onLongPress: () {},
@@ -108,6 +112,7 @@ class _ViewUserState extends State<ViewUser> {
                       id: user[index].id!,
                       name: user[index].name,
                       address: user[index].address,
+                      image: user[index].image!,
                     ),
                   ));
             },

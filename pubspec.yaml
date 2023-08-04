@@ -9,12 +9,14 @@ environment:
 dependencies:
   build_runner: ^2.4.6
   firebase_core: ^2.15.0
+  firebase_database: ^10.2.4
+  firebase_storage: ^11.2.5
   flutter:
     sdk: flutter
-  json_annotation: ^4.8.1
-  firebase_database: ^10.2.4
-  json_serializable: ^6.7.1
   flutter_slidable: ^3.0.0
+  image_picker: ^1.0.1
+  json_annotation: ^4.8.1
+  json_serializable: ^6.7.1
 
 dev_dependencies:
   flutter_lints: ^2.0.0

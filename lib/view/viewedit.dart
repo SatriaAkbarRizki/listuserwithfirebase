@@ -1,23 +1,37 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:listuserwithfirebase/model/user.dart';
 import 'package:listuserwithfirebase/presenter/presenter.dart';
+import 'package:listuserwithfirebase/storage/cloudstorage.dart';
 
 class ViewEdit extends StatefulWidget {
   final String id;
   final String name;
   final String address;
+  final String image;
 
   ViewEdit(
-      {required this.id, required this.name, required this.address, super.key});
+      {required this.id,
+      required this.name,
+      required this.address,
+      required this.image,
+      super.key});
 
   @override
   State<ViewEdit> createState() => _ViewEditState();
 }
 
 class _ViewEditState extends State<ViewEdit> {
+  CloudStorage cloudStorage = CloudStorage();
+  XFile? pathImage;
+  File? imageProfile;
   Presenter presenter = Presenter();
   TextEditingController nameController = TextEditingController();
   TextEditingController addressController = TextEditingController();
+
   @override
   void initState() {
     initValue();
@@ -29,10 +43,10 @@ class _ViewEditState extends State<ViewEdit> {
     addressController.text = widget.address;
   }
 
-  void updateData() {
+  void updateData(String image) {
     final name = nameController.text;
     final address = addressController.text;
-    presenter.updateData(widget.id, name, address);
+    presenter.updateData(widget.id, name, address, image);
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text('Succes Edit User')));
   }
@@ -44,12 +58,13 @@ class _ViewEditState extends State<ViewEdit> {
         title: Text('View/Edit User'),
         actions: [
           IconButton(
-              onPressed: () {
-                updateData();
+              onPressed: () async {
+                await cloudStorage.uploadImage(imageProfile).then((value) {
+                  updateData(value!);
+                });
                 Navigator.pop(context);
-                setState(() {});
               },
-              icon: Icon(Icons.save))
+              icon: Icon(Icons.add))
         ],
       ),
       body: Column(
@@ -79,15 +94,44 @@ class _ViewEditState extends State<ViewEdit> {
           ),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: TextFormField(
-              decoration: InputDecoration(
-                  labelText: 'image',
-                  hintText: 'link image',
-                  border: OutlineInputBorder()),
+            child: Row(
+              children: [
+                ElevatedButton.icon(
+                  icon: Icon(Icons.image),
+                  label: Text('Get Phohto'),
+                  onPressed: () async {
+                    pathImage = await pickImage();
+                    print('path image now: ${pathImage!.path}');
+                  },
+                ),
+              ],
             ),
+          ),
+          Container(
+            width: 350,
+            height: 300,
+            padding: EdgeInsets.all(20),
+            child: pathImage?.path == null
+                ? Text('')
+                : Image.file(File(pathImage!.path), fit: BoxFit.fill),
           )
         ],
       ),
     );
+  }
+
+  // Problem Solving in image
+
+  Future<XFile?> pickImage() async {
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (image == null) return null;
+      final imageTemp = File(image.path);
+      setState(() => this.imageProfile = imageTemp);
+      return image;
+    } on PlatformException catch (e) {
+      print('Failed to pick image: $e');
+      return null;
+    }
   }
 }

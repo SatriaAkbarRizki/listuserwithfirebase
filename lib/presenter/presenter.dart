@@ -43,8 +43,8 @@ class Presenter {
     return userList;
   }
 
-  Future updateData(String id, String name, String address) async {
-    final postData = User(id: null, name: name, address: address);
+  Future updateData(String id, String name, String address, String image) async {
+    final postData = User(id: null, name: name, address: address, image: image);
     final newPostKey = FirebaseDatabase.instance.ref().child('user/${id}').key;
     final Map<String, Map> updates = {};
     updates['/user/$newPostKey'] = postData.toJson();
